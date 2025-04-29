@@ -5,7 +5,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -59,12 +59,27 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.lsp.set_log_level("debug")
 
 -- NOTE: Some terminals have coliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
+--
+
+vim.g.clipboard = {
+  name = 'WslClipboard',
+  copy = {
+    ['+'] = 'clip.exe',
+    ['*'] = 'clip.exe',
+  },
+  paste = {
+    ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+  },
+  cache_enabled = 0,
+}
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
@@ -105,10 +120,10 @@ require('lazy').setup({
             -- #f8f4f0
             bg0 = '#CAB7A5', --NvimTree background color
             bg1 = '#E2D3C3', --Text edit area background color
-            bg2 = '#AF9A85',
+            bg2 = '#AF9A85', --Lualine git info highlight color
             bg3 = '#BDA893', --Current line background color
-            sel0 = '#988470',
-            sel1 = '#988470',
+            sel0 = '#CAB7A5', --Text highlight + unselected suggestions
+            sel1 = '#AA9179', --Selected suggestions
           },
         },
       }
@@ -422,7 +437,6 @@ require('lazy').setup({
                   wrapper = {
                     enabled = true,
                     checksums = {
-                      { sha256 = "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f", allowed = true },
                       { sha256 = '81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f', allowed = true },
                     },
                   },
@@ -602,6 +616,11 @@ require('lazy').setup({
     "mg979/vim-visual-multi",
     branch = "master"
   },
+
+  {
+    'swaits/universal-clipboard.nvim',
+  },
+
   {
     "goolord/alpha-nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
